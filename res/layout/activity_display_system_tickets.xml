@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent" >
+
+    <GridView
+        android:id="@+id/gv_ticket_system"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp" >
+    </GridView>
+    
+    
+<!--     <com.jess.ui.TwoWayGridView
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffff0000"
+    android:id="@+id/gv_ticket_system"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    app:cacheColorHint="#ffff0000"
+    app:numColumns="auto_fit"
+    app:numRows="2"
+    app:verticalSpacing="10dp"
+    app:horizontalSpacing="10dp"
+    app:stretchMode="spacingWidthUniform"
+    app:scrollDirectionPortrait="vertical"
+    app:scrollDirectionLandscape="horizontal"
+    app:gravity="center"/> -->
+
+</RelativeLayout>

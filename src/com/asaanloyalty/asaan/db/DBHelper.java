@@ -35,17 +35,17 @@ public class DBHelper
 		pList.add(p1);
 
 		KdsProfile p2 = new KdsProfile();
-		p2.setId(1);
+		p2.setId(2);
 		p2.setName("Bar 1");
 		pList.add(p2);
 		
 		KdsProfile p3 = new KdsProfile();
-		p3.setId(1);
+		p3.setId(3);
 		p3.setName("Kitchen 2");
 		pList.add(p3);
 		
 		KdsProfile p4 = new KdsProfile();
-		p4.setId(1);
+		p4.setId(4);
 		p4.setName("Patio Bar");
 		pList.add(p4);
 		

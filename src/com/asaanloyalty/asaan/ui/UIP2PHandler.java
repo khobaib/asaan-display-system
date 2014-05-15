@@ -5,9 +5,10 @@ import com.asaanloyalty.asaan.db.entity.OrderProfile;
 import com.asaanloyalty.asaan.db.entity.ServerWrapper;
 import com.asaanloyalty.asaan.util.AsaanConstants;
 
+import android.os.Handler;
 import android.os.Message;
 
-public class UIHandler extends Handler
+public class UIP2PHandler extends Handler
 {
 	public static final int NEW_ORDER_PLACED = 1201;
 	public static final int ORDER_STATUS_CHANGED = 1202;
