@@ -17,14 +17,13 @@ import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.asaanloyalty.asaan.R;
 import com.asaanloyalty.asaan.adapter.DisplayTicketGridAdapter;
 import com.asaanloyalty.asaan.adapter.FoodItemListAdapter;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
 import com.asaanloyalty.asaan.db.entity.OrderProfile;
-//import android.widget.AdapterView.OnItemClickListener;
+
 
 public class DisplayTicketActivity extends Activity {
     
@@ -32,6 +31,8 @@ public class DisplayTicketActivity extends Activity {
     
     List<OrderProfile> listProfile;
     public static int prevOrderState, newOrderState;
+    
+    int lastSelectedTicketIndex;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class DisplayTicketActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             OrderProfile selectedProfile =  (OrderProfile) parent.getItemAtPosition(position);
+            lastSelectedTicketIndex = position;
+//            Toast.makeText(DisplayTicketActivity.this, "position = " + position, Toast.LENGTH_SHORT).show();
             
             prevOrderState = getFoodItemStatus(selectedProfile);
             Log.e("", "prevOrderState = " + prevOrderState);
@@ -110,7 +113,7 @@ public class DisplayTicketActivity extends Activity {
         List<OrderItem> orderItemList = orderProfile.getOrderItems();
         int orderState = 0;
         for(int i = 0; i < orderItemList.size(); i++){
-            orderState = ( orderState | ((orderItemList.get(i).getDeliveryStatus() == 2)? 1 : 0) << i); 
+            orderState = ( orderState | ((orderItemList.get(i).getDeliveryStatus() != 1)? 1 : 0) << i); 
         }
         return orderState;
     }
@@ -121,7 +124,6 @@ public class DisplayTicketActivity extends Activity {
         LayoutInflater inflater = (LayoutInflater) getLayoutInflater();
         View textEntryView = inflater.inflate(R.layout.dialog_ticket, null);
         final AlertDialog alert = new AlertDialog.Builder(DisplayTicketActivity.this).create();
-//        alert.setView(textEntryView, 0, 0, 0, 0);
         alert.setCancelable(false);
         alert.setView(textEntryView);
         
@@ -132,7 +134,6 @@ public class DisplayTicketActivity extends Activity {
         TextView tvAllergyItems = (TextView)textEntryView.findViewById(R.id.tv_allergy_items);
         
         final ListView orderList =  (ListView) textEntryView.findViewById(R.id.lv_order_item_list);
-//        orderList.setEnabled(false);
         
         tvTicketName.setText(orderProfile.getPOSTicket());
         tvTableName.setText(orderProfile.getTableName());
@@ -141,20 +142,7 @@ public class DisplayTicketActivity extends Activity {
         List<OrderItem> orderItem = orderProfile.getOrderItems();
         FoodItemListAdapter foodItemListAdapter = new FoodItemListAdapter(DisplayTicketActivity.this, orderItem);
         orderList.setAdapter(foodItemListAdapter);
-
-        
-
-//        FileList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        orderList.setOnItemClickListener(new OnItemClickListener() {
-            
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//              chosedFile = (String) parent.getItemAtPosition(position);
-              Toast.makeText(DisplayTicketActivity.this, "position = " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        
-        
+             
         
         
         Button OK = (Button) textEntryView.findViewById(R.id.b_ok);
@@ -169,6 +157,10 @@ public class DisplayTicketActivity extends Activity {
                 while(newOrderState > 0){
                     if((prevOrderState % 2) != (newOrderState % 2)){
                         Log.e(">>>>>>>>", "Item status changed at position = " + position);
+                        
+                        // only order delivery state can be changed from Released to Complete,i.e. 1 to 2
+                        listProfile.get(lastSelectedTicketIndex).getOrderItems().get(position).setDeliveryStatus(2);
+                        
                     }
                     prevOrderState/= 2;
                     newOrderState/= 2;
