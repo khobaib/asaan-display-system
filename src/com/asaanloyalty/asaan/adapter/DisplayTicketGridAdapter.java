@@ -1,6 +1,7 @@
 package com.asaanloyalty.asaan.adapter;
 
 import java.util.List;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.asaanloyalty.asaan.R;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
 import com.asaanloyalty.asaan.db.entity.OrderProfile;
+import com.asaanloyalty.asaan.util.AsaanConstants;
 
 public class DisplayTicketGridAdapter extends BaseAdapter {
 
@@ -25,6 +27,7 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
     private Context mContext;
     private List<OrderProfile> mListProfile;
     Bitmap bMap;
+    Random r = new Random();
 
     public DisplayTicketGridAdapter(Context context, List<OrderProfile> listProfile) {
         mContext = context;
@@ -49,9 +52,10 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView tvTicketName;
         TextView tvTableName;
-        TextView tvServertName;
+        TextView tvServerName;
         TextView tvAllergyItems;
         CheckBox cbItemStatus;
+        TextView tvItemName;
         TextView tvStatus;
         TextView tvOptions;
         TextView tvInstructions;
@@ -69,9 +73,11 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvTicketName = (TextView)convertView.findViewById(R.id.tv_ticket_name);
             holder.tvTableName = (TextView)convertView.findViewById(R.id.tv_table_name);
-            holder.tvServertName = (TextView)convertView.findViewById(R.id.tv_server_name);
+            holder.tvServerName = (TextView)convertView.findViewById(R.id.tv_server_name);
             holder.tvAllergyItems = (TextView)convertView.findViewById(R.id.tv_allergy_items);
-            holder.cbItemStatus = (CheckBox)convertView.findViewById(R.id.cb_item_status);
+            
+            holder.cbItemStatus = (CheckBox)convertView.findViewById(R.id.cb_item_status);            
+            holder.tvItemName = (TextView)convertView.findViewById(R.id.tv_item_name);
             holder.tvStatus = (TextView)convertView.findViewById(R.id.tv_status);
             holder.tvOptions = (TextView)convertView.findViewById(R.id.tv_selected_options);
             holder.tvInstructions = (TextView)convertView.findViewById(R.id.tv_special_instructions);
@@ -88,13 +94,18 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
 
         holder.tvTicketName.setText(entry.getPOSTicket());
         holder.tvTableName.setText(entry.getTableName());
-        holder.tvServertName.setText(entry.getServerPeerId());
+        holder.tvServerName.setText(entry.getServerName());
+        
+        String allergy1 = AsaanConstants.allergy_first_items[r.nextInt(5)]; 
+        String allergy2 = AsaanConstants.allergy_second_items[r.nextInt(5)]; 
+        holder.tvAllergyItems.setText("Allergies: " + allergy1 + ", " + allergy2);
 
         List<OrderItem> orderItemList = entry.getOrderItems();
         if(orderItemList.size() >= 1){
 
-            holder.tvStatus.setText("" + orderItemList.get(0).getDeliveryStatus());
-            holder.tvOptions.setText(orderItemList.get(0).getOrderDescription());
+            holder.tvItemName.setText(orderItemList.get(0).getMenuItemName());
+            holder.tvStatus.setText("" + AsaanConstants.order_state[orderItemList.get(0).getDeliveryStatus()]);
+            holder.tvOptions.setText(orderItemList.get(0).getSelectedOptions());
             holder.tvInstructions.setText(orderItemList.get(0).getSpecialInstruction());
         }
 

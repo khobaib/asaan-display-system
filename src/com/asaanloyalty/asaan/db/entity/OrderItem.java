@@ -24,6 +24,8 @@ public class OrderItem
     @Getter
     @Setter
     String orderDescription;
+    
+    String selectedOptions;
 
     @Getter
     @Setter
@@ -49,13 +51,15 @@ public class OrderItem
 
 
 
-    public OrderItem(long id, long orderProfileId, long menuItemId, String menuItemName, String orderDescription,
-            String specialInstruction, int quantity, long createdDate, int deliveryStatus, long deliveredDate) {
+    public OrderItem(long id, long orderProfileId, long menuItemId, String menuItemName,
+            String orderDescription, String selectedOptions, String specialInstruction,
+            int quantity, long createdDate, int deliveryStatus, long deliveredDate) {
         Id = id;
         this.orderProfileId = orderProfileId;
         this.menuItemId = menuItemId;
         this.menuItemName = menuItemName;
         this.orderDescription = orderDescription;
+        this.selectedOptions = selectedOptions;
         this.specialInstruction = specialInstruction;
         this.quantity = quantity;
         this.createdDate = createdDate;
@@ -103,6 +107,14 @@ public class OrderItem
 
     public void setOrderDescription(String orderDescription) {
         this.orderDescription = orderDescription;
+    }
+    
+    public String getSelectedOptions() {
+        return selectedOptions;
+    }
+
+    public void setSelectedOptions(String selectedOptions) {
+        this.selectedOptions = selectedOptions;
     }
 
     public String getSpecialInstruction() {

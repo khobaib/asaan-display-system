@@ -17,6 +17,8 @@ public class OrderProfile
 	@Setter
 	long serverId;
 	
+	String serverName;
+	
 	@Getter
 	@Setter
 	String serverPeerId;
@@ -40,22 +42,26 @@ public class OrderProfile
 	@Getter
 	long createdDate;
 	
+	String allregiesItem;
+			
 	
 	public OrderProfile() {
         // TODO Auto-generated constructor stub
     }
 		
 
-    public OrderProfile(long id, long serverId, String serverPeerId, String tableName, String pOSTicket,
-            OrderItem[] orderItems, int orderStatus, long createdDate) {
+    public OrderProfile(long id, long serverId, String serverName, String serverPeerId, String tableName, String pOSTicket,
+            OrderItem[] orderItems, int orderStatus, long createdDate, String allregiesItem) {
         Id = id;
         this.serverId = serverId;
+        this.serverName = serverName;
         this.serverPeerId = serverPeerId;
         this.tableName = tableName;
         this.POSTicket = pOSTicket;
         this.orderItems = orderItems;
         this.orderStatus = orderStatus;
         this.createdDate = createdDate;
+        this.allregiesItem = allregiesItem;
     }
 
 
@@ -76,6 +82,16 @@ public class OrderProfile
     public void setServerId(long serverId) {
         this.serverId = serverId;
     }
+       
+    public String getServerName() {
+        return serverName;
+    }
+
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
 
     public String getServerPeerId() {
         return serverPeerId;
@@ -129,7 +145,16 @@ public class OrderProfile
     public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
-	
+
+
+    public String getAllregiesItem() {
+        return allregiesItem;
+    }
+
+
+    public void setAllregiesItem(String allregiesItem) {
+        this.allregiesItem = allregiesItem;
+    }   
 	
 }
 

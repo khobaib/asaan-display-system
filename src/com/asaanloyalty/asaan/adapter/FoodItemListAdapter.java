@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.asaanloyalty.asaan.R;
 import com.asaanloyalty.asaan.activity.DisplayTicketActivity;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
+import com.asaanloyalty.asaan.util.AsaanConstants;
 
 public class FoodItemListAdapter extends BaseAdapter{
 
@@ -58,6 +59,7 @@ public class FoodItemListAdapter extends BaseAdapter{
 
     static class ViewHolder {
         CheckBox cbItemStatus;
+        TextView tvItemName;
         TextView tvStatus;
         TextView tvOptions;
         TextView tvInstructions;
@@ -75,6 +77,7 @@ public class FoodItemListAdapter extends BaseAdapter{
 
             holder.cbItemStatus = (CheckBox)convertView.findViewById(R.id.cb_item_status);
 
+            holder.tvItemName = (TextView)convertView.findViewById(R.id.tv_item_name);
             holder.tvStatus = (TextView)convertView.findViewById(R.id.tv_status);
             holder.tvOptions = (TextView)convertView.findViewById(R.id.tv_selected_options);
             holder.tvInstructions = (TextView)convertView.findViewById(R.id.tv_special_instructions);
@@ -113,8 +116,9 @@ public class FoodItemListAdapter extends BaseAdapter{
             }
         });
 
-        holder.tvStatus.setText("" + entry.getDeliveryStatus());
-        holder.tvOptions.setText(entry.getOrderDescription());
+        holder.tvItemName.setText(entry.getMenuItemName());
+        holder.tvStatus.setText("" + AsaanConstants.order_state[entry.getDeliveryStatus()]);
+        holder.tvOptions.setText(entry.getSelectedOptions());
         holder.tvInstructions.setText(entry.getSpecialInstruction());
 
         return convertView;

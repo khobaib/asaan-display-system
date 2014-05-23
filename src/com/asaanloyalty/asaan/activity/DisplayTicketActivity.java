@@ -2,6 +2,7 @@ package com.asaanloyalty.asaan.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,16 +24,37 @@ import com.asaanloyalty.asaan.adapter.DisplayTicketGridAdapter;
 import com.asaanloyalty.asaan.adapter.FoodItemListAdapter;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
 import com.asaanloyalty.asaan.db.entity.OrderProfile;
+import com.asaanloyalty.asaan.network.ClientAPIWrapper;
+import com.asaanloyalty.asaan.util.AsaanConstants;
 
 
 public class DisplayTicketActivity extends Activity {
     
+    public static final String[] TABLE_NAME_PREFIX = {"A", "P", "C"};
+    public static final String[] SERVER_PEER_NAME = {"Chris Brown", "Tom Cook", "Noor Awan", "Uwe Hauldt", "Dan Boyle"};
+    public static final String[] ITEM_NAME = {"Pepperoni Pizza", "Pasta Bolognese", "lasagne",
+        "Pizza Milano", "Soya Milk", "Coconut Milk", "Fried Rice", "Chicken Fry", "Mashed Potato", "Frappe"};
+    public static final String[] SELECTED_OPTIONS = {
+        "Large, Cheesy Crust, Extra Toppings", "Sticky Cheese, half-baked pasta, 2 sauce",
+        "Extra Cheese, eggplant, half-baked", "Medium, Sausage Crust, Extra Toppings",
+        "Extra Soy, No Ice", "Concentrated Milk, Normal", "Egg, Chicken & Beef Mixed",
+        "Extra Spicy, 2 Sauce", "Gravy & Hot", "No Ice, Medium Size"
+    };
+    public static final String[] SPECIAL_INSTRUCTIONS = {"Extra Pepperoni", "Sticky Cheese", "Extra Saucy",
+        "Extra Cheese", "2 Straw", "Green Coconut", "No vege", "Breast Piece", "Extra Salad", "Extra Frappe"
+    };
+    
+    
+    
     GridView gvTicketSystem;
     
-    List<OrderProfile> listProfile;
+    static DisplayTicketGridAdapter displayTicketGridAdapter;   
+    static List<OrderProfile> listProfile;
     public static int prevOrderState, newOrderState;
     
     int lastSelectedTicketIndex;
+    
+    ClientAPIWrapper workerThread;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +63,9 @@ public class DisplayTicketActivity extends Activity {
         
         String stationName = getIntent().getExtras().getString("station_name");
         setTitle("Asaan Display System - " + stationName);
+        
+        workerThread = new ClientAPIWrapper(this);
+        workerThread.start();
         
 //        DisplayMetrics metrics = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -64,22 +89,42 @@ public class DisplayTicketActivity extends Activity {
         /*
          * Hardcoded data section
          */
-        for(int i = 1; i <= 30; i++){
-            List<OrderItem> orderItemList = new ArrayList<OrderItem>();
-            for(int j = 1; j <= (i%6) + 1 ; j++){
-                OrderItem thisItem = new OrderItem(j, i, j, "item name", "order Description", "special instruction",
-                        j + 3, System.currentTimeMillis(), j % 3, System.currentTimeMillis());
-                orderItemList.add(thisItem);
-            }
-            OrderProfile thisProfile = new OrderProfile(i, i + 5, "server peer", "table name", "pOS Ticket",
-                    orderItemList.toArray(new OrderItem[orderItemList.size()]), 1, System.currentTimeMillis());
-            listProfile.add(thisProfile);
-            
-        }
+//        Random r = new Random();
+//        for(int i = 1; i <= 30; i++){
+//            List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+//            for(int j = 1; j <= (i%6) + 1 ; j++){
+//                
+//                int randomVal = r.nextInt(10);
+//                String itemName = ITEM_NAME[randomVal];
+//                String selectedOp = SELECTED_OPTIONS[randomVal];
+//                String specialIns = SPECIAL_INSTRUCTIONS[randomVal];
+//                
+//                OrderItem thisItem = new OrderItem(j, i, j, itemName, "orderDesc", selectedOp, specialIns,
+//                        j + 3, System.currentTimeMillis(), r.nextInt(3), System.currentTimeMillis());
+//                orderItemList.add(thisItem);
+//            }
+//            
+//            int posTicketBase = 545 + i;
+//            String tableName = TABLE_NAME_PREFIX[i%3] + (r.nextInt(50) + 10); 
+//            String serverPeerName = SERVER_PEER_NAME[r.nextInt(5)];
+//            
+//            OrderProfile thisProfile = new OrderProfile(i, i + 5, "Server: " + serverPeerName, "serverPeer", 
+//                    "Table: " + tableName, "A-" + posTicketBase,
+//                    orderItemList.toArray(new OrderItem[orderItemList.size()]), 1, System.currentTimeMillis(), "Peanuts, Soynuts");
+//            listProfile.add(thisProfile);
+//            
+//        }
         
-        
-        gvTicketSystem.setAdapter(new DisplayTicketGridAdapter(DisplayTicketActivity.this, listProfile));
+        displayTicketGridAdapter = new DisplayTicketGridAdapter(DisplayTicketActivity.this, listProfile);
+        gvTicketSystem.setAdapter(displayTicketGridAdapter);
         gvTicketSystem.setOnItemClickListener(mItemClickListener);
+    }
+    
+    
+    public static void addNewOrder(OrderProfile orderProfile){
+        listProfile.add(orderProfile);
+        displayTicketGridAdapter.notifyDataSetChanged();
+        
     }
     
     
@@ -91,6 +136,18 @@ public class DisplayTicketActivity extends Activity {
 //        }
 //        return result;
 //  }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(workerThread != null){
+            ClientAPIWrapper newThread = workerThread;
+            workerThread = null;
+            newThread.interrupt();
+        }
+
+    }
+    
     
     
     private OnItemClickListener mItemClickListener = new OnItemClickListener() {
@@ -137,7 +194,12 @@ public class DisplayTicketActivity extends Activity {
         
         tvTicketName.setText(orderProfile.getPOSTicket());
         tvTableName.setText(orderProfile.getTableName());
-        tvServertName.setText(orderProfile.getServerPeerId());
+        tvServertName.setText(orderProfile.getServerName());        
+        
+        Random r = new Random();
+        String allergy1 = AsaanConstants.allergy_first_items[r.nextInt(5)]; 
+        String allergy2 = AsaanConstants.allergy_second_items[r.nextInt(5)]; 
+        tvAllergyItems.setText("Allergies: " + allergy1 + ", " + allergy2);
         
         List<OrderItem> orderItem = orderProfile.getOrderItems();
         FoodItemListAdapter foodItemListAdapter = new FoodItemListAdapter(DisplayTicketActivity.this, orderItem);
