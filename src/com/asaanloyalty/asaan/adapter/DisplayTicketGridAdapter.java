@@ -1,5 +1,6 @@
 package com.asaanloyalty.asaan.adapter;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -82,8 +83,6 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
             holder.tvOptions = (TextView)convertView.findViewById(R.id.tv_selected_options);
             holder.tvInstructions = (TextView)convertView.findViewById(R.id.tv_special_instructions);
 
-
-            //            holder.lvOrderItems.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
             convertView.setTag(holder);
         }
         else {
@@ -96,11 +95,9 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
         holder.tvTableName.setText(entry.getTableName());
         holder.tvServerName.setText(entry.getServerName());
         
-        String allergy1 = AsaanConstants.allergy_first_items[r.nextInt(5)]; 
-        String allergy2 = AsaanConstants.allergy_second_items[r.nextInt(5)]; 
-        holder.tvAllergyItems.setText("Allergies: " + allergy1 + ", " + allergy2);
+        holder.tvAllergyItems.setText(entry.getAllregiesItem());
 
-        List<OrderItem> orderItemList = entry.getOrderItems();
+        List<OrderItem> orderItemList = Arrays.asList(entry.getOrderItems());
         if(orderItemList.size() >= 1){
 
             holder.tvItemName.setText(orderItemList.get(0).getMenuItemName());
@@ -108,10 +105,6 @@ public class DisplayTicketGridAdapter extends BaseAdapter {
             holder.tvOptions.setText(orderItemList.get(0).getSelectedOptions());
             holder.tvInstructions.setText(orderItemList.get(0).getSpecialInstruction());
         }
-
-
-        //        Log.e("order item list size", "position = " + position + " size of list = " + entry.getOrderItems().size());
-
         return convertView;
     }
 

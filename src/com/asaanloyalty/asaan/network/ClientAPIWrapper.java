@@ -12,6 +12,7 @@ import com.asaanloyalty.asaan.activity.DisplayTicketActivity;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
 import com.asaanloyalty.asaan.db.entity.OrderProfile;
 import com.asaanloyalty.asaan.ui.UIP2PHandler;
+import com.asaanloyalty.asaan.util.AsaanConstants;
 
 public class ClientAPIWrapper extends Thread {
 
@@ -39,15 +40,15 @@ public class ClientAPIWrapper extends Thread {
                         UIP2PHandler handler = new UIP2PHandler(mContext);                                                                   
 
                         int orderProfileId = orderProfileIdCounter++;
-                        int orderItemCount = r.nextInt(6);
+                        int orderItemCount = r.nextInt(6) + 1;
                         List<OrderItem> orderItemList = new ArrayList<OrderItem>();
                         
                         for(int i = 1; i <= orderItemCount; i++){                                                    
                             
                             int randomVal = r.nextInt(10);
-                            String itemName = DisplayTicketActivity.ITEM_NAME[randomVal];
-                            String selectedOp = DisplayTicketActivity.SELECTED_OPTIONS[randomVal];
-                            String specialIns = DisplayTicketActivity.SPECIAL_INSTRUCTIONS[randomVal];
+                            String itemName = AsaanConstants.ITEM_NAME[randomVal];
+                            String selectedOp = AsaanConstants.SELECTED_OPTIONS[randomVal];
+                            String specialIns = AsaanConstants.SPECIAL_INSTRUCTIONS[randomVal];
                             int qty = r.nextInt(5) + 1; 
                             
                             OrderItem thisItem = new OrderItem(i, orderProfileId, i, itemName, "orderDesc", selectedOp, specialIns,
@@ -57,12 +58,16 @@ public class ClientAPIWrapper extends Thread {
                         
                         
                         int posTicketBase = 545 + orderProfileId;
-                        String tableName = DisplayTicketActivity.TABLE_NAME_PREFIX[orderProfileId%3] + (r.nextInt(50) + 10); 
-                        String serverPeerName = DisplayTicketActivity.SERVER_PEER_NAME[r.nextInt(5)];
+                        String tableName = AsaanConstants.TABLE_NAME_PREFIX[orderProfileId%3] + (r.nextInt(50) + 10); 
+                        String serverPeerName = AsaanConstants.SERVER_PEER_NAME[r.nextInt(5)];
+                        
+                        String allergy1 = AsaanConstants.ALLERGY_FIRST_ITEMS[r.nextInt(5)]; 
+                        String allergy2 = AsaanConstants.ALLERGY_SECOND_ITEMS[r.nextInt(5)]; 
                         
                         OrderProfile orderProfile = new OrderProfile(orderProfileId, orderProfileId + 5, "Server: " + serverPeerName, "serverPeer", 
-                                "Table: " + tableName, "A-" + posTicketBase,
-                                orderItemList.toArray(new OrderItem[orderItemList.size()]), 1, System.currentTimeMillis(), "Peanuts, Soynuts");
+                                "Table: " + tableName, "A-" + posTicketBase, 
+                                orderItemList.toArray(new OrderItem[orderItemList.size()]),
+                                1, System.currentTimeMillis(), "Allergies: " + allergy1 + ", " + allergy2);
                         
                         Message msg = Message.obtain();
                         msg.what = UIP2PHandler.NEW_ORDER_PLACED;

@@ -1,8 +1,8 @@
 package com.asaanloyalty.asaan.activity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,27 +25,10 @@ import com.asaanloyalty.asaan.adapter.FoodItemListAdapter;
 import com.asaanloyalty.asaan.db.entity.OrderItem;
 import com.asaanloyalty.asaan.db.entity.OrderProfile;
 import com.asaanloyalty.asaan.network.ClientAPIWrapper;
-import com.asaanloyalty.asaan.util.AsaanConstants;
 
 
 public class DisplayTicketActivity extends Activity {
-    
-    public static final String[] TABLE_NAME_PREFIX = {"A", "P", "C"};
-    public static final String[] SERVER_PEER_NAME = {"Chris Brown", "Tom Cook", "Noor Awan", "Uwe Hauldt", "Dan Boyle"};
-    public static final String[] ITEM_NAME = {"Pepperoni Pizza", "Pasta Bolognese", "lasagne",
-        "Pizza Milano", "Soya Milk", "Coconut Milk", "Fried Rice", "Chicken Fry", "Mashed Potato", "Frappe"};
-    public static final String[] SELECTED_OPTIONS = {
-        "Large, Cheesy Crust, Extra Toppings", "Sticky Cheese, half-baked pasta, 2 sauce",
-        "Extra Cheese, eggplant, half-baked", "Medium, Sausage Crust, Extra Toppings",
-        "Extra Soy, No Ice", "Concentrated Milk, Normal", "Egg, Chicken & Beef Mixed",
-        "Extra Spicy, 2 Sauce", "Gravy & Hot", "No Ice, Medium Size"
-    };
-    public static final String[] SPECIAL_INSTRUCTIONS = {"Extra Pepperoni", "Sticky Cheese", "Extra Saucy",
-        "Extra Cheese", "2 Straw", "Green Coconut", "No vege", "Breast Piece", "Extra Salad", "Extra Frappe"
-    };
-    
-    
-    
+        
     GridView gvTicketSystem;
     
     static DisplayTicketGridAdapter displayTicketGridAdapter;   
@@ -167,7 +150,7 @@ public class DisplayTicketActivity extends Activity {
     };
     
     private int getFoodItemStatus(OrderProfile orderProfile){
-        List<OrderItem> orderItemList = orderProfile.getOrderItems();
+        List<OrderItem> orderItemList = Arrays.asList(orderProfile.getOrderItems());
         int orderState = 0;
         for(int i = 0; i < orderItemList.size(); i++){
             orderState = ( orderState | ((orderItemList.get(i).getDeliveryStatus() != 1)? 1 : 0) << i); 
@@ -196,12 +179,9 @@ public class DisplayTicketActivity extends Activity {
         tvTableName.setText(orderProfile.getTableName());
         tvServertName.setText(orderProfile.getServerName());        
         
-        Random r = new Random();
-        String allergy1 = AsaanConstants.allergy_first_items[r.nextInt(5)]; 
-        String allergy2 = AsaanConstants.allergy_second_items[r.nextInt(5)]; 
-        tvAllergyItems.setText("Allergies: " + allergy1 + ", " + allergy2);
+        tvAllergyItems.setText(orderProfile.getAllregiesItem());
         
-        List<OrderItem> orderItem = orderProfile.getOrderItems();
+        List<OrderItem> orderItem = Arrays.asList(orderProfile.getOrderItems());
         FoodItemListAdapter foodItemListAdapter = new FoodItemListAdapter(DisplayTicketActivity.this, orderItem);
         orderList.setAdapter(foodItemListAdapter);
              
@@ -221,7 +201,7 @@ public class DisplayTicketActivity extends Activity {
                         Log.e(">>>>>>>>", "Item status changed at position = " + position);
                         
                         // only order delivery state can be changed from Released to Complete,i.e. 1 to 2
-                        listProfile.get(lastSelectedTicketIndex).getOrderItems().get(position).setDeliveryStatus(2);
+                        listProfile.get(lastSelectedTicketIndex).getOrderItems()[position].setDeliveryStatus(2);
                         
                     }
                     prevOrderState/= 2;
